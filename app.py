@@ -3,50 +3,50 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import time
 
-# --- 1. ÆäÀÌÁö ¼³Á¤ ---
-st.set_page_config(page_title="KoELSA AI ¾ÈÀü ¹®Áøº¿", page_icon="??")
+# --- 1. í˜ì´ì§€ ì„¤ì • ---
+st.set_page_config(page_title="KoELSA AI ì•ˆì „ ë¬¸ì§„ë´‡", page_icon="ğŸ›—")
 
-st.title("?? AI ½Â°­±â ¾ÈÀü ¼ÒÅë ¹®ÁøÇ¥")
+st.title("ğŸ›— AI ìŠ¹ê°•ê¸° ì•ˆì „ ì†Œí†µ ë¬¸ì§„í‘œ")
 st.markdown("---")
-st.info("?? °Ë»ç Àü, °í°´´ÔÀÇ ºÒ¾È »çÇ×À» ¹Ì¸® µè°í ¸ÂÃãÇüÀ¸·Î Á¡°ËÇØ µå¸³´Ï´Ù.")
+st.info("ğŸ’¡ ê²€ì‚¬ ì „, ê³ ê°ë‹˜ì˜ ë¶ˆì•ˆ ì‚¬í•­ì„ ë¯¸ë¦¬ ë“£ê³  ë§ì¶¤í˜•ìœ¼ë¡œ ì ê²€í•´ ë“œë¦½ë‹ˆë‹¤.")
 
-# --- 2. ¼¼¼Ç »óÅÂ ÃÊ±âÈ­ (´ëÈ­ ±â·Ï ÀúÀå) ---
+# --- 2. ì„¸ì…˜ ìƒíƒœ ì´ˆê¸°í™” (ëŒ€í™” ê¸°ë¡ ì €ì¥) ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    # Ã¹ ÀÎ»ç ¹× Ã¹ ¹øÂ° Áú¹® (°Ç¹° Á¤º¸)
-    st.session_state.messages.append({"role": "assistant", "content": "¾È³çÇÏ¼¼¿ä! ÇÑ±¹½Â°­±â¾ÈÀü°ø´Ü AI Ãªº¿ÀÔ´Ï´Ù. \n\n¸ÕÀú **°Ç¹°¸í°ú ½Â°­±â °íÀ¯¹øÈ£**¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä."})
+    # ì²« ì¸ì‚¬ ë° ì²« ë²ˆì§¸ ì§ˆë¬¸ (ê±´ë¬¼ ì •ë³´)
+    st.session_state.messages.append({"role": "assistant", "content": "ì•ˆë…•í•˜ì„¸ìš”! í•œêµ­ìŠ¹ê°•ê¸°ì•ˆì „ê³µë‹¨ AI ì±—ë´‡ì…ë‹ˆë‹¤. \n\në¨¼ì € **ê±´ë¬¼ëª…ê³¼ ìŠ¹ê°•ê¸° ê³ ìœ ë²ˆí˜¸**ë¥¼ ì…ë ¥í•´ ì£¼ì„¸ìš”."})
 
 if "step" not in st.session_state:
-    st.session_state.step = 0 # ÁøÇà ´Ü°è ÃßÀû
+    st.session_state.step = 0 # ì§„í–‰ ë‹¨ê³„ ì¶”ì 
 
 if "diagnosis" not in st.session_state:
-    st.session_state.diagnosis = None # Áø´Ü °á°ú ÀúÀå
+    st.session_state.diagnosis = None # ì§„ë‹¨ ê²°ê³¼ ì €ì¥
 
-# --- 3. ±×·¡ÇÈ ¸®Æ÷Æ® »ı¼º ÇÔ¼ö (matplotlib) ---
+# --- 3. ê·¸ë˜í”½ ë¦¬í¬íŠ¸ ìƒì„± í•¨ìˆ˜ (matplotlib) ---
 def generate_report(diagnosis_type, complaint):
     fig, ax = plt.subplots(figsize=(4, 6))
     
-    # ½Â°­±â ¹è°æ
+    # ìŠ¹ê°•ê¸° ë°°ê²½
     ax.add_patch(patches.Rectangle((0.1, 0.1), 0.8, 0.8, linewidth=2, edgecolor='#333', facecolor='#f9f9f9'))
     ax.add_patch(patches.Rectangle((0.2, 0.2), 0.6, 0.6, linewidth=2, edgecolor='black', facecolor='white'))
     
-    # ºÎÀ§ Á¤ÀÇ
+    # ë¶€ìœ„ ì •ì˜
     parts = {
         "DOOR": patches.Rectangle((0.45, 0.2), 0.1, 0.6, facecolor='gray', alpha=0.1),
         "MACHINE": patches.Rectangle((0.2, 0.82), 0.6, 0.15, facecolor='gray', alpha=0.1)
     }
     for p in parts.values(): ax.add_patch(p)
 
-    # Áø´Ü¿¡ µû¸¥ ÇÏÀÌ¶óÀÌÆ®
+    # ì§„ë‹¨ì— ë”°ë¥¸ í•˜ì´ë¼ì´íŠ¸
     target = None
     diag_text = ""
     
     if diagnosis_type == "DOOR":
         target = parts["DOOR"]
-        diag_text = "µµ¾î(Door) Á¤¹Ğ Á¡°Ë"
+        diag_text = "ë„ì–´(Door) ì •ë°€ ì ê²€"
     elif diagnosis_type == "MACHINE":
         target = parts["MACHINE"]
-        diag_text = "±Ç»ó±â/·ÎÇÁ ¼ÒÀ½ Á¡°Ë"
+        diag_text = "ê¶Œìƒê¸°/ë¡œí”„ ì†ŒìŒ ì ê²€"
     
     if target:
         target.set_facecolor('#FF4444')
@@ -57,68 +57,68 @@ def generate_report(diagnosis_type, complaint):
                 color='red', fontweight='bold', ha='center', fontsize=12)
 
     ax.axis('off')
-    st.pyplot(fig) # À¥ È­¸é¿¡ Ãâ·Â
+    st.pyplot(fig) # ì›¹ í™”ë©´ì— ì¶œë ¥
 
-# --- 4. Ã¤ÆÃ ÀÎÅÍÆäÀÌ½º ±¸Çö ---
-# ÀÌÀü ´ëÈ­ Ãâ·Â
+# --- 4. ì±„íŒ… ì¸í„°í˜ì´ìŠ¤ êµ¬í˜„ ---
+# ì´ì „ ëŒ€í™” ì¶œë ¥
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# »ç¿ëÀÚ ÀÔ·Â Ã³¸®
-if prompt := st.chat_input("´äº¯À» ÀÔ·ÂÇØÁÖ¼¼¿ä..."):
-    # »ç¿ëÀÚ ¸Ş½ÃÁö Ç¥½Ã
+# ì‚¬ìš©ì ì…ë ¥ ì²˜ë¦¬
+if prompt := st.chat_input("ë‹µë³€ì„ ì…ë ¥í•´ì£¼ì„¸ìš”..."):
+    # ì‚¬ìš©ì ë©”ì‹œì§€ í‘œì‹œ
     with st.chat_message("user"):
         st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Ãªº¿ ÀÀ´ä ·ÎÁ÷ (´Ü°èº° Áú¹®)
+    # ì±—ë´‡ ì‘ë‹µ ë¡œì§ (ë‹¨ê³„ë³„ ì§ˆë¬¸)
     response = ""
     
-    # Step 0: °Ç¹° Á¤º¸ ÀÔ·Â ÈÄ -> °ü¸®ÀÚ ¼±ÀÓ ¿©ºÎ Áú¹®
+    # Step 0: ê±´ë¬¼ ì •ë³´ ì…ë ¥ í›„ -> ê´€ë¦¬ì ì„ ì„ ì—¬ë¶€ ì§ˆë¬¸
     if st.session_state.step == 0:
-        response = "È®ÀÎµÇ¾ú½À´Ï´Ù. \n\n**ÃÖ±Ù 1³â ÀÌ³»¿¡ ¾ÈÀü°ü¸®ÀÚ°¡ º¯°æµÈ ÀûÀÌ ÀÖ³ª¿ä?**\n(½Â°­±â ¾ÈÀü°ü¸®¹ı Á¦29Á¶¿¡ µû¶ó º¯°æ ½Ã ½Å°í°¡ ÇÊ¿äÇÕ´Ï´Ù.)"
+        response = "í™•ì¸ë˜ì—ˆìŠµë‹ˆë‹¤. \n\n**ìµœê·¼ 1ë…„ ì´ë‚´ì— ì•ˆì „ê´€ë¦¬ìê°€ ë³€ê²½ëœ ì ì´ ìˆë‚˜ìš”?**\n(ìŠ¹ê°•ê¸° ì•ˆì „ê´€ë¦¬ë²• ì œ29ì¡°ì— ë”°ë¼ ë³€ê²½ ì‹œ ì‹ ê³ ê°€ í•„ìš”í•©ë‹ˆë‹¤.)"
         st.session_state.step = 1
         
-    # Step 1: °ü¸®ÀÚ ´äº¯ ÈÄ -> º¸Çè °¡ÀÔ ¿©ºÎ Áú¹®
+    # Step 1: ê´€ë¦¬ì ë‹µë³€ í›„ -> ë³´í—˜ ê°€ì… ì—¬ë¶€ ì§ˆë¬¸
     elif st.session_state.step == 1:
-        if "³×" in prompt or "¿¹" in prompt:
-            response = "?? **[¾È³»]** °ü¸®ÀÚ º¯°æ ½Å°í°¡ ´©¶ôµÇÁö ¾Êµµ·Ï È®ÀÎ ºÎÅ¹µå¸³´Ï´Ù. \n\n´ÙÀ½À¸·Î, **½Â°­±â Ã¥ÀÓº¸Çè(»ç°í¹è»ó Ã¥ÀÓº¸Çè)¿¡ °¡ÀÔµÇ¾î ÀÖ³ª¿ä?**"
+        if "ë„¤" in prompt or "ì˜ˆ" in prompt:
+            response = "âš ï¸ **[ì•ˆë‚´]** ê´€ë¦¬ì ë³€ê²½ ì‹ ê³ ê°€ ëˆ„ë½ë˜ì§€ ì•Šë„ë¡ í™•ì¸ ë¶€íƒë“œë¦½ë‹ˆë‹¤. \n\në‹¤ìŒìœ¼ë¡œ, **ìŠ¹ê°•ê¸° ì±…ì„ë³´í—˜(ì‚¬ê³ ë°°ìƒ ì±…ì„ë³´í—˜)ì— ê°€ì…ë˜ì–´ ìˆë‚˜ìš”?**"
         else:
-            response = "³×, ¾Ë°Ú½À´Ï´Ù. \n\n´ÙÀ½À¸·Î, **½Â°­±â Ã¥ÀÓº¸Çè(»ç°í¹è»ó Ã¥ÀÓº¸Çè)¿¡ °¡ÀÔµÇ¾î ÀÖ³ª¿ä?**"
+            response = "ë„¤, ì•Œê² ìŠµë‹ˆë‹¤. \n\në‹¤ìŒìœ¼ë¡œ, **ìŠ¹ê°•ê¸° ì±…ì„ë³´í—˜(ì‚¬ê³ ë°°ìƒ ì±…ì„ë³´í—˜)ì— ê°€ì…ë˜ì–´ ìˆë‚˜ìš”?**"
         st.session_state.step = 2
         
-    # Step 2: º¸Çè ´äº¯ ÈÄ -> ºÒ¾È ¿ä¼Ò(ÁÖ°ü½Ä) Áú¹®
+    # Step 2: ë³´í—˜ ë‹µë³€ í›„ -> ë¶ˆì•ˆ ìš”ì†Œ(ì£¼ê´€ì‹) ì§ˆë¬¸
     elif st.session_state.step == 2:
-        response = "È®ÀÎ °¨»çÇÕ´Ï´Ù. ÀÌÁ¦ °í°´´ÔÀÇ ºÒ¾È »çÇ×À» µè°Ú½À´Ï´Ù. \n\n**Æò¼Ò ÀÌ¿ëÇÏ½Ã¸é¼­ ¼ÒÀ½, Áøµ¿, ¹® ´İÈû µî ºÒÆíÇÏ°Å³ª ºÒ¾ÈÇß´ø Á¡ÀÌ ÀÖ´Ù¸é ÀÚÀ¯·Ó°Ô Àû¾îÁÖ¼¼¿ä.**"
+        response = "í™•ì¸ ê°ì‚¬í•©ë‹ˆë‹¤. ì´ì œ ê³ ê°ë‹˜ì˜ ë¶ˆì•ˆ ì‚¬í•­ì„ ë“£ê² ìŠµë‹ˆë‹¤. \n\n**í‰ì†Œ ì´ìš©í•˜ì‹œë©´ì„œ ì†ŒìŒ, ì§„ë™, ë¬¸ ë‹«í˜ ë“± ë¶ˆí¸í•˜ê±°ë‚˜ ë¶ˆì•ˆí–ˆë˜ ì ì´ ìˆë‹¤ë©´ ììœ ë¡­ê²Œ ì ì–´ì£¼ì„¸ìš”.**"
         st.session_state.step = 3
 
-    # Step 3: AI ºĞ¼® ¹× ¸®Æ÷Æ® »ı¼º
+    # Step 3: AI ë¶„ì„ ë° ë¦¬í¬íŠ¸ ìƒì„±
     elif st.session_state.step == 3:
-        # °£´ÜÇÑ Å°¿öµå ºĞ¼® ·ÎÁ÷
+        # ê°„ë‹¨í•œ í‚¤ì›Œë“œ ë¶„ì„ ë¡œì§
         diagnosis = "NORMAL"
-        if "¹®" in prompt or "´İÈú" in prompt or "Äç" in prompt:
+        if "ë¬¸" in prompt or "ë‹«í" in prompt or "ì¾…" in prompt:
             diagnosis = "DOOR"
-            analysis_msg = "?? **AI ºĞ¼® °á°ú:** 'µµ¾î °³Æó ÀåÄ¡' °ü·Ã ÀÌ»óÀÌ ÀÇ½ÉµË´Ï´Ù."
-        elif "¼Ò¸®" in prompt or "¿õ" in prompt or "Áøµ¿" in prompt:
+            analysis_msg = "ğŸš¨ **AI ë¶„ì„ ê²°ê³¼:** 'ë„ì–´ ê°œí ì¥ì¹˜' ê´€ë ¨ ì´ìƒì´ ì˜ì‹¬ë©ë‹ˆë‹¤."
+        elif "ì†Œë¦¬" in prompt or "ì›…" in prompt or "ì§„ë™" in prompt:
             diagnosis = "MACHINE"
-            analysis_msg = "?? **AI ºĞ¼® °á°ú:** '±Ç»ó±â ¶Ç´Â ·ÎÇÁ' °ü·Ã ¼ÒÀ½ÀÌ ÀÇ½ÉµË´Ï´Ù."
+            analysis_msg = "ğŸš¨ **AI ë¶„ì„ ê²°ê³¼:** 'ê¶Œìƒê¸° ë˜ëŠ” ë¡œí”„' ê´€ë ¨ ì†ŒìŒì´ ì˜ì‹¬ë©ë‹ˆë‹¤."
         else:
-            analysis_msg = "? **AI ºĞ¼® °á°ú:** Æ¯ÀÌ »çÇ×ÀÌ °¨ÁöµÇÁö ¾Ê¾ÒÀ¸³ª, Àü¹İÀûÀÎ Á¤¹Ğ Á¡°ËÀ» ÁøÇàÇÏ°Ú½À´Ï´Ù."
+            analysis_msg = "âœ… **AI ë¶„ì„ ê²°ê³¼:** íŠ¹ì´ ì‚¬í•­ì´ ê°ì§€ë˜ì§€ ì•Šì•˜ìœ¼ë‚˜, ì „ë°˜ì ì¸ ì •ë°€ ì ê²€ì„ ì§„í–‰í•˜ê² ìŠµë‹ˆë‹¤."
 
-        response = f"{analysis_msg}\n\nÀá½Ã¸¸ ±â´Ù·ÁÁÖ¼¼¿ä. **¸ÂÃãÇü ¾È½É ¸®Æ÷Æ®**¸¦ »ı¼º ÁßÀÔ´Ï´Ù..."
+        response = f"{analysis_msg}\n\nì ì‹œë§Œ ê¸°ë‹¤ë ¤ì£¼ì„¸ìš”. **ë§ì¶¤í˜• ì•ˆì‹¬ ë¦¬í¬íŠ¸**ë¥¼ ìƒì„± ì¤‘ì…ë‹ˆë‹¤..."
         st.session_state.diagnosis = diagnosis
         st.session_state.step = 4
 
-    # Ãªº¿ ¸Ş½ÃÁö Ç¥½Ã
+    # ì±—ë´‡ ë©”ì‹œì§€ í‘œì‹œ
     with st.chat_message("assistant"):
         st.markdown(response)
         
-        # ¸¶Áö¸· ´Ü°è¸é ±×·¡ÇÈ ¸®Æ÷Æ® Ãâ·Â
+        # ë§ˆì§€ë§‰ ë‹¨ê³„ë©´ ê·¸ë˜í”½ ë¦¬í¬íŠ¸ ì¶œë ¥
         if st.session_state.step == 4 and st.session_state.diagnosis:
-            with st.spinner('±×·¡ÇÈ ¸®Æ÷Æ® »ı¼º Áß...'):
-                time.sleep(1.5) # »ı¼ºÇÏ´Â Ã´ ¿¬Ãâ
+            with st.spinner('ê·¸ë˜í”½ ë¦¬í¬íŠ¸ ìƒì„± ì¤‘...'):
+                time.sleep(1.5) # ìƒì„±í•˜ëŠ” ì²™ ì—°ì¶œ
                 generate_report(st.session_state.diagnosis, prompt)
-                st.success("?? ¸®Æ÷Æ®°¡ »ı¼ºµÇ¾ú½À´Ï´Ù! °Ë»ç¿øÀÌ ÇØ´ç ºÎÀ§¸¦ ÁıÁß Á¡°ËÇÏ°í °á°ú¸¦ ¾È³»ÇØ µå¸± ¿¹Á¤ÀÔ´Ï´Ù.")
+                st.success("ğŸ“ ë¦¬í¬íŠ¸ê°€ ìƒì„±ë˜ì—ˆìŠµë‹ˆë‹¤! ê²€ì‚¬ì›ì´ í•´ë‹¹ ë¶€ìœ„ë¥¼ ì§‘ì¤‘ ì ê²€í•˜ê³  ê²°ê³¼ë¥¼ ì•ˆë‚´í•´ ë“œë¦´ ì˜ˆì •ì…ë‹ˆë‹¤.")
             
     st.session_state.messages.append({"role": "assistant", "content": response})
